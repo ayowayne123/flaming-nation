@@ -14,6 +14,7 @@ module.exports = {
       },
       colors: {
         flamingBlack: "#1F1F1F",
+        flamingRed : "#EC1C24",
       },
     },
   },

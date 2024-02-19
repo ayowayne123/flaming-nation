@@ -5,3 +5,15 @@
 :root {
   @apply bg-[#313131E5];
 }
+
+
+  .nav {
+    @apply text-white font-medium flex flex-row items-center  gap-2 w-full h-12 capitalize px-12;
+  }
+
+  .activeNav{
+@apply bg-flamingRed;
+  }
+
+
+
