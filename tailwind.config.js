@@ -17,6 +17,7 @@ module.exports = {
         flamingRed : "#EC1C24",
         flamingYellow:"#FBBC05",
         flamingGrey: "#292929",
+        flamingAsh: "#313131"
       },
     },
   },
