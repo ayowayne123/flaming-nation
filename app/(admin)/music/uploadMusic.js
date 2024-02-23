@@ -10,9 +10,12 @@ function Upload({ onClose, onUpload }) {
   const [category_id, setCategory_id] = useState("");
   const [thumbnail, setThumbnail] = useState(null);
   const [thumbnailUrl, setThumbnailUrl] = useState("");
+  const [audioUrl, setAudioUrl] = useState("");
   const [thumbnailUploaded, setThumbnailUploaded] = useState(false);
+  const [audioUploaded, setAudioUploaded] = useState(false);
   const [audioFile, setAudioFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0); // State to track upload progress
+  const [errors, setErrors] = useState([]);
 
   // Function to handle thumbnail upload
   const handleThumbnailUpload = async (event) => {
@@ -25,6 +28,8 @@ function Upload({ onClose, onUpload }) {
     try {
       const formData = new FormData();
       formData.append("thumbnail", file);
+      setThumbnailUploaded(true);
+      setUploadProgress(20);
 
       const response = await fetch(
         "https://flaming.grantsforme.xyz/api/v1/audios/upload-thumbnail",
@@ -37,31 +42,84 @@ function Upload({ onClose, onUpload }) {
             const progress = parseInt(
               Math.round((progressEvent.loaded / progressEvent.total) * 100)
             );
-            setUploadProgress(progress);
+
+            setUploadProgress(40);
           },
         }
       );
 
       if (!response.ok) {
         console.error("Thumbnail upload failed:", response.statusText);
+        setErrors([...errors, "Thumbnail upload failed"]);
         return null;
       }
 
       const data = await response.json();
       const newUrl = data.data.url;
+      setUploadProgress(60);
 
       setThumbnailUrl(newUrl);
-      setThumbnailUploaded(true); // set a state to track whether thumbnail is uploaded
+      setUploadProgress(100);
+      // set a state to track whether thumbnail is uploaded
     } catch (error) {
       console.error("Error uploading thumbnail:", error);
+      setErrors([...errors, "Error uploading thumbnail"]);
       return null;
     }
   };
 
   // Function to handle audio file upload
-  const handleAudioUpload = (event) => {
+  const handleAudioUpload = async (event) => {
     const file = event.target.files[0];
     setAudioFile(file);
+    setUploadProgress(10);
+    setAudioUploaded(true);
+    await audioUpload(file);
+  };
+
+  const audioUpload = async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append("audio", file);
+
+      setUploadProgress(20);
+
+      const response = await fetch(
+        "https://flaming.grantsforme.xyz/api/v1/audios/upload-audio",
+        {
+          method: "POST",
+          body: formData,
+          // Adding a progress event listener to track upload progress
+          // and update the progress bar
+          onUploadProgress: (progressEvent) => {
+            const progress = parseInt(
+              Math.round((progressEvent.loaded / progressEvent.total) * 100)
+            );
+
+            setUploadProgress(60);
+          },
+        }
+      );
+
+      if (!response.ok) {
+        console.error("Audio upload failed:", response.status);
+        setErrors([...errors, "Audio upload failed"]);
+        return null;
+      }
+
+      const data = await response.json();
+      const newUrl = data.data.url;
+      setUploadProgress(80);
+
+      setAudioUrl(newUrl);
+      setUploadProgress(100);
+      setAudioUploaded(false);
+    } catch (error) {
+      console.error("Error uploading Audio file:", error);
+      setErrors([...errors, "Error uploading Audio file"]);
+      setAudioUploaded(false);
+      return null;
+    }
   };
 
   // Function to handle form submission
@@ -70,6 +128,7 @@ function Upload({ onClose, onUpload }) {
 
     console.log(title, duration, thumbnail, category_id, audioFile);
   };
+  console.log(uploadProgress);
 
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -80,7 +139,13 @@ function Upload({ onClose, onUpload }) {
         >
           Close
         </button>
-
+        {errors.length > 0 && (
+          <div className="text-red-500 my-4">
+            {errors.map((error, index) => (
+              <p key={index}>{error}</p>
+            ))}
+          </div>
+        )}
         <form
           onSubmit={handleSubmit}
           className="h-full flex items-center justify-center flex-col"
@@ -163,7 +228,7 @@ function Upload({ onClose, onUpload }) {
                   </button>
                 </div>
               ) : (
-                <div className="col-span-2">
+                <div className="col-span-2 ">
                   <label
                     htmlFor="thumbnail"
                     className="cursor-pointer w-full bg-flamingAsh rounded-xl h-10 px-4 py-auto text-white flex flex-col justify-center items-start "
@@ -192,22 +257,45 @@ function Upload({ onClose, onUpload }) {
             {/* Left form items end */}
 
             {/* Upload Right item start */}
-            <div className="flex justify-center items-center w-[230px] h-[230px] bg-flamingAsh rounded-lg hover:bg-flamingGrey ">
-              <label
-                htmlFor="audioFile"
-                className="cursor-pointer h-full w-full text-white rounded-md flex flex-col justify-center items-center text-lg"
-              >
-                <PiMusicNotesThin size={100} /> Upload Audio
-                <input
-                  type="file"
-                  id="audioFile"
-                  accept="audio/*"
-                  onChange={handleAudioUpload}
-                  required
-                  className="hidden"
-                />
-              </label>
-            </div>
+            {audioUrl ? (
+              <div className="col-span-2 flex items-center">
+                {audioFile.name}
+                <button
+                  onClick={() => {
+                    setAudioUrl("");
+                    setAudioUploaded(false);
+                  }}
+                  className="text-sm text-red-500"
+                >
+                  Remove
+                </button>
+              </div>
+            ) : (
+              <div className="flex justify-center items-center w-[230px] h-[230px] bg-flamingAsh rounded-lg hover:bg-flamingGrey ">
+                <label
+                  htmlFor="audioFile"
+                  className="cursor-pointer h-full w-full text-white rounded-md flex flex-col justify-center items-center text-lg"
+                >
+                  <PiMusicNotesThin size={100} /> Upload Audio
+                  <input
+                    type="file"
+                    id="audioFile"
+                    accept="audio/*"
+                    onChange={handleAudioUpload}
+                    required
+                    className="hidden"
+                  />
+                  {audioUploaded && (
+                    <progress
+                      value={uploadProgress}
+                      max="100"
+                      className="w-full bg-flamingRed"
+                    />
+                  )}
+                </label>
+              </div>
+            )}
+
             {/* Upload Right item end */}
           </div>
 
