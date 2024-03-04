@@ -1,62 +1,20 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { LuMusic4 } from "react-icons/lu";
-import { PiMusicNotesThin } from "react-icons/pi";
+import React, { useState } from "react";
+import { BiBook } from "react-icons/bi";
 
 function Upload({ onClose, onUpload }) {
   const [title, setTitle] = useState("");
-  const [duration, setDuration] = useState("");
-  const [artist, setArtist] = useState("");
-  const [category, setCategory] = useState(4); // Default category ID
-  const [program, setProgram] = useState(1); // Default program ID
-  const [programs, setPrograms] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [price, setPrice] = useState("");
+  const [writer, setWriter] = useState("");
   const [thumbnail, setThumbnail] = useState(null);
   const [thumbnailUrl, setThumbnailUrl] = useState("");
-  const [audioUrl, setAudioUrl] = useState("");
+  const [bookUrl, setBookUrl] = useState("");
   const [thumbnailUploaded, setThumbnailUploaded] = useState(false);
-  const [audioUploaded, setAudioUploaded] = useState(false);
-  const [audioFile, setAudioFile] = useState(null);
+  const [bookUploaded, setBookUploaded] = useState(false);
+  const [bookFile, setBookFile] = useState(null);
   const [uploading, setUploading] = useState(false); // State to track upload progress
   const [errors, setErrors] = useState([]);
-
-  useEffect(() => {
-    // Fetch programs data when component mounts
-    const fetchPrograms = async () => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_APIURL}/programs`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch programs");
-        }
-        const data = await response.json();
-        setPrograms(data.data);
-      } catch (error) {
-        console.error("Error fetching programs:", error);
-        setErrors([...errors, "Error fetching programs"]);
-      }
-    };
-  
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_APIURL}/audio_categories`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch categories");
-        }
-        const data = await response.json();
-        setCategories(data.data);
-
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-        setErrors([...errors, "Error fetching categories"]);
-      }
-    };
-  
-    fetchPrograms();
-    fetchCategories();
-    console.log(categories,"categories")
-    console.log(programs,"programs")
-     
-  }, []);
+  const [description, setDescription] = useState("");
 
 
 
@@ -70,23 +28,23 @@ function Upload({ onClose, onUpload }) {
   };
 
   // Function to handle audio file upload
-  const handleAudioUpload = async (event) => {
+  const handleBookUpload = async (event) => {
     const file = event.target.files[0];
-    setAudioFile(file);
-    setAudioUploaded(true);
+    setBookFile(file);
+    setBookUploaded(true);
     setUploading(true);
-    await audioUpload(file);
+    await bookUpload(file);
   };
 
   const thumbnailUpload = async (file) => {
     try {
       const formData = new FormData();
-      formData.append("thumbnail", file);
+      formData.append("book-thumbnail", file);
       setThumbnailUploaded(true);
 
       const response = await fetch(
 
-      `${process.env.NEXT_PUBLIC_APIURL}/audios/upload-thumbnail`,
+      `${process.env.NEXT_PUBLIC_APIURL}/books/upload-thumbnail`,
         {
           method: "POST",
           body: formData,
@@ -109,16 +67,16 @@ function Upload({ onClose, onUpload }) {
     }
   };
 
-  const audioUpload = async (file) => {
+  const bookUpload = async (file) => {
     try {
       const formData = new FormData();
-      formData.append("audio", file);
+      formData.append("book", file);
 
-      setAudioUploaded(true);
+      setBookUploaded(true);
 
       const response = await fetch(
 
-        `${process.env.NEXT_PUBLIC_APIURL}/audios/upload-audio`,
+        `${process.env.NEXT_PUBLIC_APIURL}/books/upload-book`,
         {
           method: "POST",
           body: formData,
@@ -126,47 +84,45 @@ function Upload({ onClose, onUpload }) {
       );
 
       if (!response.ok) {
-        console.error("Audio upload failed:", response.status);
-        setErrors([...errors, "Audio upload failed"]);
+        console.error("Book upload failed:", response.status);
+        setErrors([...errors, "Book upload failed"]);
         return null;
       }
 
       const data = await response.json();
       const newUrl = data.data.url;
-      setAudioUrl(newUrl);
+      setBookUrl(newUrl);
       setUploading(false);
     } catch (error) {
-      console.error("Error uploading Audio file:", error);
-      setErrors([...errors, "Error uploading Audio file"]);
+      console.error("Error uploading Book file:", error);
+      setErrors([...errors, "Error uploading Book file"]);
       return null;
     }
   };
 
-  const createAudio = async () => {
+  const createBook = async () => {
     try {
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_APIURL}/audios`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_APIURL}/books`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           title,
-          duration,
-          artist,
-          category,
-          program,
+          price,
+          writer,
+          description,
           thumbnail_url: thumbnailUrl,
-          audio_url: audioUrl,
+          book_url: bookUrl,
         }),
       });
       console.log( title,
-        duration,
-        artist,
-        category,
-        program,
+        price,
+        writer,
+        description,
         thumbnailUrl,
-         audioUrl,)
+         bookUrl,)
 
       if (!response.ok) {
         throw new Error("Failed to populate endpoint");
@@ -174,14 +130,13 @@ function Upload({ onClose, onUpload }) {
 
       // Reset form fields and states after successful upload
       setTitle("");
-      setDuration("");
-      setArtist("");
-      setCategory(1); // Reset to default category
-      setProgram(1); // Reset to default program
+      setPrice("");
+      setWriter("");
       setThumbnailUrl("");
-      setAudioUrl("");
+      setBookUrl("");
+      setDescription("");
       setThumbnailUploaded(false);
-      setAudioUploaded(false);
+      setBookUploaded(false);
       setUploading(false);
       setErrors([]);
     } catch (error) {
@@ -193,12 +148,12 @@ function Upload({ onClose, onUpload }) {
   // Function to handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!title || !duration || !artist || !program || !thumbnailUrl || !audioUrl) {
+    if (!title || !price || !writer || !thumbnailUrl || !bookUrl) {
       // Validation check, you can customize this as per your requirements
       setErrors([...errors, "Please fill in all the required fields"]);
       return;
     }
-    await createAudio();
+    await createBook();
   };
 
   return (
@@ -223,11 +178,11 @@ function Upload({ onClose, onUpload }) {
         >
           <div className="flex flex-row gap-6 w-full">
             {/* Left form items start */}
-            <div className="grid grid-cols-2 gap-x-4 justify-between grow text-sm font-normal">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2 justify-between grow text-sm font-normal">
               <div className=" col-span-2">
                 <input
                   className="bg-flamingAsh rounded-xl h-10 px-4 py-auto placeholder:text-white outline-none w-full "
-                  placeholder="Title"
+                  placeholder="Book Title"
                   type="text"
                   id="title"
                   value={title}
@@ -238,53 +193,38 @@ function Upload({ onClose, onUpload }) {
               <div className=" col-span-1">
                 <input
                   className="bg-flamingAsh rounded-xl h-10 px-4 py-auto placeholder:text-white outline-none w-full "
-                  placeholder="Artist/Preacher"
+                  placeholder="Writer"
                   type="text"
-                  id="artist"
-                  value={artist}
-                  onChange={(e) => setArtist(e.target.value)}
+                  id="Writer"
+                  value={writer}
+                  onChange={(e) => setWriter(e.target.value)}
                   required
                 />
-              </div>
-              <div className=" col-span-1">
-              <select
-                  className="bg-flamingAsh rounded-xl h-10 px-4 py-auto placeholder:text-white outline-none w-full "
-                  value={category}
-                  onChange={(e) => setCategory(parseInt(e.target.value))}
-                  required
-                >
-                 {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
               </div>
 
               <div className=" col-span-1">
-                <select
-                  className="bg-flamingAsh rounded-xl h-10 px-4 py-auto placeholder:text-white outline-none w-full"
-                  value={program}
-                  onChange={(e) => setProgram(parseInt(e.target.value))}
-                  required
-                >
-                 {programs.map((program) => (
-                    <option key={program.id} value={program.id}>
-                      {program.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className=" col-span-1">
                 <input
                   className="bg-flamingAsh rounded-xl h-10 px-4 py-auto placeholder:text-white outline-none w-full "
-                  placeholder="Duration"
-                  type="text"
-                  id="duration"
-                  value={duration}
-                  onChange={(e) => setDuration(e.target.value)}
+                  placeholder="Price"
+                  type="number"
+                  id="price"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
                   required
                 />
+              </div>
+
+              <div className=" col-span-2">
+
+<textarea
+              className="bg-flamingAsh rounded-xl px-4 py-2 placeholder:text-white outline-none w-full resize-none"
+              placeholder="Description"
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={4} // Set default rows to 4
+              required
+            />
               </div>
 
               {/* Thumbnail field input start */}
@@ -333,13 +273,13 @@ function Upload({ onClose, onUpload }) {
             {/* Left form items end */}
 
             {/* Upload Right item start */}
-            {audioUrl ? (
+            {bookUrl ? (
               <div className="flex justify-center items-center w-[230px] h-[230px] overflow-y-scroll bg-flamingAsh rounded-lg flex items-center">
-                {audioFile.name}
+                {bookFile.name}
                 <button
                   onClick={() => {
-                    setAudioUrl("");
-                    setAudioUploaded(false);
+                    setBookUrl("");
+                    setBookUploaded(false);
                   }}
                   className="text-sm text-red-500"
                 >
@@ -348,18 +288,18 @@ function Upload({ onClose, onUpload }) {
               </div>
             ) : (
               <div className="flex justify-center items-center w-[230px] h-[230px] bg-flamingAsh rounded-lg hover:bg-flamingGrey ">
-              {audioUploaded && uploading ? (<p>Uploading...</p>):(
+              {bookUploaded && uploading ? (<p>Uploading...</p>):(
 
 <label
-htmlFor="audioFile"
+htmlFor="bookFile"
 className="cursor-pointer h-full w-full text-white rounded-md flex flex-col justify-center items-center text-lg"
 >
-<PiMusicNotesThin size={100} /> Upload Audio
+<BiBook size={100} /> Upload Book
 <input
   type="file"
-  id="audioFile"
-  accept="audio/*"
-  onChange={handleAudioUpload}
+  id="bookFile"
+  accept="application/pdf"
+  onChange={handleBookUpload}
   required
   className="hidden"
 />
@@ -374,12 +314,12 @@ className="cursor-pointer h-full w-full text-white rounded-md flex flex-col just
             {/* Upload Right item end */}
           </div>
 
-          <div className="w-full flex item-start">
+          <div className="w-full flex item-start mt-2">
             <button
               type="submit"
               className="bg-flamingRed text-white px-4 py-2 rounded-md items-start flex gap-2  flex-row"
             >
-              <LuMusic4 size={20} /> Upload Audio
+              <BiBook size={20} /> Upload Book
             </button>
           </div>
         </form>

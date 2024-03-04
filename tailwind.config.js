@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+const plugin = require("tailwindcss/plugin");
+
 module.exports = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -21,5 +23,30 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(({ addUtilities }) => {
+      addUtilities({
+        ".no-scrollbar::-webkit-scrollbar": {
+          display: "none",
+        },
+        ".no-scrollbar": {
+          "-ms-overflow-style": "none",
+          "scrollbar-width": "none",
+        },
+        // Add your custom scrollbar styles here
+        ".custom-scrollbar::-webkit-scrollbar": {
+          width: "10px", // Set the width of the scrollbar
+        },
+        ".custom-scrollbar::-webkit-scrollbar-track": {
+          background: "#ff0000", // Set the background color of the track
+        },
+        ".custom-scrollbar::-webkit-scrollbar-thumb": {
+          background: "#888", // Set the color of the thumb
+        },
+        ".custom-scrollbar::-webkit-scrollbar-thumb:hover": {
+          background: "#555", // Set the color of the thumb on hover
+        },
+      });
+    }),
+  ]
 };

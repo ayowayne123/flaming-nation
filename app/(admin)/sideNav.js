@@ -12,11 +12,13 @@ function sideNav() {
 
 const pathname = usePathname();
   return (
-    <div className="w-[211px] h-full bg-flamingBlack flex flex-col justify-between">
+    <aside className="w-[211px] z-20 fixed  h-full bg-flamingBlack flex flex-col justify-between  " aria-label="Sidebar">
 
-      <div>
+<div className="flex flex-1 flex-col relative min-h-0">
+
+<div className="overflow-y-auto flex-1  pt-24 mb-12">
       {/* Logo starts */}
-      <div className="text-white text-left text-xl py-24 font-semibold px-12">
+      <div className="text-white text-left text-xl pb-24 font-semibold px-12">
         Flamming Nation App
       </div>
       {/* Logo ends */}
@@ -40,12 +42,17 @@ const pathname = usePathname();
       </div>
 
 {/* Logout starts */}
-      <div className="justify-end px-6">
+      <div className="absolute bottom-0 left-0 w-full px-6 bg-flamingBlack ">
         <div className="border-b w-full  border-white"></div>
         
-        <div className="text-white gap-2 flex flex-row px-6 py-4 mb-4"><span><FaPowerOff size={24} /></span> Logout </div></div>
+        <div className="text-white gap-2 flex flex-row px-6 py-4 mb-4">
+          <span>
+            <FaPowerOff size={24} /></span> Logout </div>
+            </div>
         {/* Logout ends */}
-    </div>
+</div>
+
+    </aside>
   );
 }
 

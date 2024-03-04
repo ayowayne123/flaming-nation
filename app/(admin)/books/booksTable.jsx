@@ -1,12 +1,14 @@
 "use client";
 import { useState, useEffect} from "react";
-import Upload from "./uploadMusic";
+import Upload from "./uploadBooks";
 import { IoSearchOutline } from "react-icons/io5";
 import { RiEqualizerLine } from "react-icons/ri";
 import { LuMusic4 } from "react-icons/lu";
 import { BsMusicNote } from "react-icons/bs";
+import { FaPen } from "react-icons/fa";
+import { BiBook } from "react-icons/bi";
 
-function MusicTable() {
+function BooksTable() {
   const [showUploadPopup, setShowUploadPopup] = useState(false);
   const [tableData, setTableData] = useState([]);
 
@@ -16,16 +18,16 @@ function MusicTable() {
   useEffect(() => {
   const fetchTableData = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_APIURL}/audios`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_APIURL}/books`);
       if (!response.ok) {
-        throw new Error("Failed to fetch audio");
+        throw new Error("Failed to fetch book");
       }
       const data = await response.json();
       setTableData(data.data);
     } catch (error) {
-      console.error("Error fetching audio:", error);
+      console.error("Error fetching book:", error);
      
-      // setErrors([...errors, "Error fetching audio"]);
+      // setErrors([...errors, "Error fetching book"]);
     }
   };
   fetchTableData();
@@ -58,13 +60,13 @@ function MusicTable() {
           className="w-40 h-10 bg-flamingRed text-white rounded-lg flex items-center gap-2 px-4 text-sm cursor-pointer"
           onClick={toggleUploadPopup}
         >
-          <LuMusic4 size={20} />
-          Upload Audio
+          <BiBook size={20} />
+          Upload Book
         </div>
 
         {/* Edit Music button */}
         <div className="w-32 h-10 bg-flamingAsh text-white rounded-lg flex items-center gap-2 px-4 text-sm cursor-pointer">
-          <BsMusicNote size={20} />
+          <FaPen size={20} />
           Edit
         </div>
       </div>
@@ -79,24 +81,23 @@ function MusicTable() {
 <table className="w-full text-white table-fixed overflow-y-scroll ">
   <thead className="font-semibold sticky">
     <tr>
-      <td colSpan='2' className="px-4 py-2">Title</td>
-      <td colSpan='2' className="px-4 py-2">Preacher</td>
-      <td className="px-4 py-2">Category</td>
-      <td className="px-4 py-2">Program</td>
-      <td className="px-4 py-2">Date Uploaded</td>
+      <td colSpan='2' className="px-2 py-2">Title</td>
+      <td colSpan='2' className="px-2 py-2">Writer</td>
+      <td className="px-2 py-2">Price</td>
+      
+      <td className="px-2 py-2">Date Uploaded</td>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td colSpan='8'><hr /></td>
+      <td colSpan='7'><hr /></td>
     </tr>
-    {tableData.map((audio)=>
-     <tr key={audio.id}>
-     <td colSpan='2' className="px-4 text-[13px] py-4 ">{audio.title}</td>
-     <td colSpan='2' className="px-4 text-[13px] py-4">{audio.artist}</td>
-     <td className="px-4 text-[13px] py-4">{audio.category.name}</td>
-     <td className="px-4 text-[13px] py-4">{audio.program.name}</td>
-     <td className="px-4 text-[13px] py-4">  {new Date(audio.created_at).toLocaleDateString()}</td>
+    {tableData.map((book)=>
+     <tr key={book.id}>
+     <td colSpan='2' className="px-2 text-[13px] py-4 ">{book.title}</td>
+     <td colSpan='2' className="px-2 text-[13px] py-4">{book.writer}</td>
+     <td className="px-2 text-[13px] py-4">{book.price}</td>
+     {/* <td className="px-2 text-[13px] py-4">  {new Date(book.created_at).toLocaleDateString()}</td> */}
    </tr>
     )}
    
@@ -110,4 +111,4 @@ function MusicTable() {
   );
 }
 
-export default MusicTable;
+export default BooksTable;

@@ -1,6 +1,7 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import SmallCard from "@/app/utils/smallCard";
+import SmallCardLoader from "@/app/utils/smallCardLoader";
 import { BsMusicNote } from "react-icons/bs";
 import { RiBook3Line } from "react-icons/ri";
 import { LuMusic4 } from "react-icons/lu";
@@ -21,8 +22,8 @@ function Page() {
   async function fetchData() {
     try {
       const [overviewResponse, totalAudiosResponse] = await Promise.all([
-        fetch('https://flaming.grantsforme.xyz/api/v1/audios/overview'),
-        fetch('https://flaming.grantsforme.xyz/api/v1/overview')
+        fetch(`${process.env.NEXT_PUBLIC_APIURL}/audios/overview`),
+        fetch(`${process.env.NEXT_PUBLIC_APIURL}/overview`)
       ]);
 
       if (!overviewResponse.ok || !totalAudiosResponse.ok) {
@@ -68,20 +69,28 @@ function Page() {
     })
   ];
 
+  const loader = Array.from({ length: 4 }, (_, index) => index);
+
 
   return  (
-    <div className="p-8 w-full mx-auto max-w-[1300px]">
+    <div className="p-8 w-full mx-auto max-w-[1300px] overflow-hidden">
     {/* Top Icon cards start */}
   <div className="flex flex-row gap-4 mb-8">
-    {icons.map((iconData, index) => (
-      <SmallCard key={index} icon={iconData.icon} number={iconData.number} text={iconData.text} />
-    ))}
+  {icons.length === 0 ? (
+          loader.map(index => <SmallCardLoader key={index} />)
+        ) : (
+          // Render icons or SmallCardLoader based on loading state and icons array
+          icons.map((iconData, index) => (
+            <SmallCard key={index} icon={iconData.icon} number={iconData.number} text={iconData.text} />
+          ))
+        )}
   </div>
   {/* Top icon cards end */}
 
   {/* Table for music start */}
+  <div><MusicTable/></div>
 
-<MusicTable/>
+
   {/* Table for music end */}
   
     </div>
