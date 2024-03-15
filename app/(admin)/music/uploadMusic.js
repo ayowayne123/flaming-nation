@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { LuMusic4 } from "react-icons/lu";
 import { PiMusicNotesThin } from "react-icons/pi";
+import Image from "next/image";
 
 function Upload({ onClose, onUpload }) {
   const [title, setTitle] = useState("");
