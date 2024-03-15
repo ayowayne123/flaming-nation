@@ -8,7 +8,7 @@ import { PiImageSquare } from "react-icons/pi";
 import { BiBook } from "react-icons/bi";
 import { FaPowerOff } from "react-icons/fa6";
 
-function sideNav() {
+function SideNav() {
 
 const pathname = usePathname();
   return (
@@ -56,4 +56,4 @@ const pathname = usePathname();
   );
 }
 
-export default sideNav;
+export default SideNav;

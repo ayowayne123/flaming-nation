@@ -290,9 +290,11 @@ function Upload({ onClose, onUpload }) {
               {/* Thumbnail field input start */}
               {thumbnailUrl ? (
                 <div className="col-span-2 flex items-center">
-                  <img
+                  <Image
                     src={thumbnailUrl}
                     alt="Thumbnail"
+                    width={80} 
+                    height={80}
                     className="h-20 w-20 mr-4"
                   />
                   <button

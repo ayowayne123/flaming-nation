@@ -74,7 +74,7 @@ function MusicTable() {
       )}
       {/* Top bar end */}
 
-      <div className="overflow-y-scroll max-h-[calc(100vh-330px)] min-h-[320px] mb-3 relative no-scrollbar custom-scrollbar">
+      <div className="overflow-y-scroll max-h-[calc(100vh-330px)] min-h-[320px] mb-3 relative  custom-scrollbar">
 {/* Table begins */}
 <table className="w-full text-white table-fixed overflow-y-scroll ">
   <thead className="font-semibold sticky">

@@ -35,16 +35,23 @@ module.exports = {
         },
         // Add your custom scrollbar styles here
         ".custom-scrollbar::-webkit-scrollbar": {
-          width: "10px", // Set the width of the scrollbar
+          width: "5px",
+          opacity: "0%",
+          display: "hidden"
+          // transition: "opacity 0.3s", 
+          /* Add transition for smooth appearance */
+        },
+        ".custom-scrollbar:hover::-webkit-scrollbar": {
+          
         },
         ".custom-scrollbar::-webkit-scrollbar-track": {
-          background: "#ff0000", // Set the background color of the track
+          background: "#888", // Set the background color of the track
         },
         ".custom-scrollbar::-webkit-scrollbar-thumb": {
-          background: "#888", // Set the color of the thumb
+          background: "#EC1C24", // Set the color of the thumb
         },
         ".custom-scrollbar::-webkit-scrollbar-thumb:hover": {
-          background: "#555", // Set the color of the thumb on hover
+          background: "#f00", // Set the color of the thumb on hover
         },
       });
     }),
