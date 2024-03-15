@@ -9,6 +9,7 @@ import { BsMusicNote } from "react-icons/bs";
 function MusicTable() {
   const [showUploadPopup, setShowUploadPopup] = useState(false);
   const [tableData, setTableData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const toggleUploadPopup = () => {
     setShowUploadPopup(!showUploadPopup);
@@ -22,6 +23,7 @@ function MusicTable() {
       }
       const data = await response.json();
       setTableData(data.data);
+      setIsLoading(false)
     } catch (error) {
       console.error("Error fetching audio:", error);
      
@@ -74,9 +76,42 @@ function MusicTable() {
       )}
       {/* Top bar end */}
 
-      <div className="overflow-y-scroll max-h-[calc(100vh-330px)] min-h-[320px] mb-3 relative  custom-scrollbar">
+      <div className="overflow-y-scroll h-[calc(100vh-350px)] min-h-[320px] h-full mb-3 relative no-scrollbar custom-scrollbar ">
 {/* Table begins */}
-<table className="w-full text-white table-fixed overflow-y-scroll ">
+
+  {isLoading ? (
+          // Show loading skeleton when isLoading is true
+          <>
+                    <div className="w-full text-white table-fixed overflow-y-scroll ">
+  <div className="font-semibold sticky">
+    <div className="grid gap-4 grid-cols-8">
+      <span className="px-4 py-2 col-span-2">Title</span>
+      <span className="px-4 py-2 col-span-2 ">Preacher</span>
+      <span className="px-4 py-2">Category</span>
+      <span className="px-4 py-2">Program</span>
+      <span className="px-4 py-2">Date Uploaded</span>
+    </div>
+  </div>
+  <hr />
+            
+              <div  className="px-4 py-2">Loading...</div>
+            
+            {/* Creating 5 placeholder rows */}
+            {[...Array(10)].map((_, index) => (
+              <div key={index} className="grid gap-4 grid-cols-8">
+                <span className="px-4 h-6 w-full m-4 col-span-2 bg-gray-300 animate-pulse"></span>
+                <span className="px-4 h-6 w-full m-4  col-span-2 bg-gray-300 animate-pulse"></span>
+                <span className="px-4 h-6 w-full m-4  bg-gray-300 animate-pulse"></span>
+                <span className="px-4 h-6 w-full m-4  bg-gray-300 animate-pulse"></span>
+                <span className="px-4 h-6 w-full m-4  bg-gray-300 animate-pulse"></span>
+              </div>
+            ))}
+            </div>
+          </>
+        ) : (
+          // Show actual data when isLoading is false
+          <>
+         <table className="w-full text-white table-fixed overflow-y-scroll ">
   <thead className="font-semibold sticky">
     <tr>
       <td colSpan='2' className="px-4 py-2">Title</td>
@@ -102,6 +137,11 @@ function MusicTable() {
    
   </tbody>
 </table>
+          </>
+        )}
+    
+   
+ 
 </div>
 
 

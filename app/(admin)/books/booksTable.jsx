@@ -11,6 +11,7 @@ import { BiBook } from "react-icons/bi";
 function BooksTable() {
   const [showUploadPopup, setShowUploadPopup] = useState(false);
   const [tableData, setTableData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const toggleUploadPopup = () => {
     setShowUploadPopup(!showUploadPopup);
@@ -24,6 +25,7 @@ function BooksTable() {
       }
       const data = await response.json();
       setTableData(data.data);
+      setIsLoading(false)
     } catch (error) {
       console.error("Error fetching book:", error);
      
@@ -76,9 +78,38 @@ function BooksTable() {
       )}
       {/* Top bar end */}
 
-      <div className="overflow-y-scroll max-h-[calc(100vh-330px)] min-h-[320px] mb-3 relative no-scrollbar custom-scrollbar">
-{/* Table begins */}
-<table className="w-full text-white table-fixed overflow-y-scroll ">
+      <div className="overflow-y-scroll h-[calc(100vh-350px)] min-h-[320px] mb-3 relative no-scrollbar custom-scrollbar">
+      {isLoading ? (
+          // Show loading skeleton when isLoading is true
+          <>
+                    <div className="w-full text-white table-fixed overflow-y-scroll ">
+  <div className="font-semibold sticky">
+    <div className="grid gap-4 grid-cols-7">
+      <span className="px-4 py-2 col-span-2">Title</span>
+      <span className="px-4 py-2 col-span-2 ">Writer</span>
+      <span className="px-4 py-2">Price</span>
+      <span className="px-4 py-2">Date Uploaded</span>
+    </div>
+  </div>
+  <hr />
+            
+              <div  className="px-4 py-2">Loading...</div>
+            
+            {/* Creating 5 placeholder rows */}
+            {[...Array(10)].map((_, index) => (
+              <div key={index} className="grid gap-4 grid-cols-7">
+                <span className="px-4 h-6 w-full m-4 col-span-2 bg-gray-300 animate-pulse"></span>
+                <span className="px-4 h-6 w-full m-4  col-span-2 bg-gray-300 animate-pulse"></span>
+                <span className="px-4 h-6 w-full m-4  bg-gray-300 animate-pulse"></span>
+                <span className="px-4 h-6 w-full m-4  bg-gray-300 animate-pulse"></span>
+              </div>
+            ))}
+            </div>
+          </>
+        ) : (
+
+
+<table className="w-full text-white table-fixed overflow-y-scroll">
   <thead className="font-semibold sticky">
     <tr>
       <td colSpan='2' className="px-2 py-2">Title</td>
@@ -103,6 +134,9 @@ function BooksTable() {
    
   </tbody>
 </table>
+)
+
+}
 </div>
 
 
