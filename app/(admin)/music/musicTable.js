@@ -76,7 +76,7 @@ function MusicTable() {
       )}
       {/* Top bar end */}
 
-      <div className="overflow-y-scroll h-[calc(100vh-350px)] min-h-[320px] h-full mb-3 relative no-scrollbar custom-scrollbar ">
+      <div className="overflow-y-scroll h-[calc(100vh-350px)] min-h-[320px] h-full mb-3 relative  custom-scrollbar ">
 {/* Table begins */}
 
   {isLoading ? (

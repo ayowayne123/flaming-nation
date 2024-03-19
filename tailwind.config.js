@@ -37,8 +37,8 @@ module.exports = {
         ".custom-scrollbar::-webkit-scrollbar": {
           width: "5px",
           opacity: "0%",
-          display: "hidden"
-          // transition: "opacity 0.3s", 
+          display: "none",
+          transition: "opacity 0.3s", 
           /* Add transition for smooth appearance */
         },
         ".custom-scrollbar:hover::-webkit-scrollbar": {
@@ -52,6 +52,7 @@ module.exports = {
         },
         ".custom-scrollbar::-webkit-scrollbar-thumb:hover": {
           background: "#f00", // Set the color of the thumb on hover
+          display: "block",
         },
       });
     }),
