@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect} from "react";
 import Upload from "./uploadMusic";
+import EditAudio from "./editMusic";
 import { IoSearchOutline } from "react-icons/io5";
 import { RiEqualizerLine } from "react-icons/ri";
 import { LuMusic4 } from "react-icons/lu";
@@ -9,10 +10,23 @@ import { BsMusicNote } from "react-icons/bs";
 function MusicTable() {
   const [showUploadPopup, setShowUploadPopup] = useState(false);
   const [tableData, setTableData] = useState([]);
+  const [showEditPopup, setShowEditPopup] = useState(false);
+  const [editAudioData, setEditAudioData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+const [filteredTableData, setFilteredTableData] = useState([]);
 
   const toggleUploadPopup = () => {
     setShowUploadPopup(!showUploadPopup);
+  };
+  
+  const toggleEditPopup = () => {
+    setShowEditPopup(!showEditPopup);
+  };
+
+  const handleEdit = (audio) => {
+    setEditAudioData(audio);
+    toggleEditPopup();
   };
   useEffect(() => {
   const fetchTableData = async () => {
@@ -33,17 +47,44 @@ function MusicTable() {
   fetchTableData();
 }, []); 
 
+const filterTableData = (query) => {
+  const lowerCaseQuery = query.toLowerCase();
+  const filteredData = tableData.filter((audio) => {
+    return (
+      audio.title.toLowerCase().includes(lowerCaseQuery) ||
+      audio.artist.toLowerCase().includes(lowerCaseQuery) ||
+      audio.category.name.toLowerCase().includes(lowerCaseQuery) ||
+      audio.program.name.toLowerCase().includes(lowerCaseQuery)
+    );
+  });
+  setFilteredTableData(filteredData);
+};
+
+// Effect to update filtered data when the search query changes
+useEffect(() => {
+  filterTableData(searchQuery);
+}, [searchQuery, tableData]);
+
+// Function to handle search input change
+const handleSearchChange = (event) => {
+  setSearchQuery(event.target.value);
+};
+
+
+
   return (
     <div className="w-full bg-flamingBlack py-5 px-8 ">
       {/* Top bar start */}
       <div className="flex flex-row items-center justify-center gap-3">
         {/* Search bar */}
         <span className="relative rounded-lg text-white text-md px-3 bg-flamingAsh   grow py-2 my-2 h-10 flex">
-          <input
-            type="text"
-            className="bg-transparent outline-none w-full pl-8"
-            defaultValue="https://www.youtube.com/watch?v=xPV76mhyr5M"
-          />
+        <input
+  type="text"
+  className="bg-transparent outline-none w-full pl-8"
+  placeholder="Search"
+  value={searchQuery}
+  onChange={handleSearchChange}
+/>
           <span className="text-white absolute left-3  items-center justify-center hover:opacity-70 cursor-pointer">
             <IoSearchOutline size={20} />
           </span>
@@ -73,6 +114,10 @@ function MusicTable() {
       {/* Popup for upload */}
       {showUploadPopup && (
         <Upload onClose={toggleUploadPopup}  />
+      )}
+    
+      {showEditPopup && (
+        <EditAudio onClose={toggleEditPopup} audioData={editAudioData} />
       )}
       {/* Top bar end */}
 
@@ -125,13 +170,16 @@ function MusicTable() {
     <tr>
       <td colSpan='8'><hr /></td>
     </tr>
-    {tableData.map((audio)=>
+    {filteredTableData.map((audio)=>
      <tr key={audio.id}>
      <td colSpan='2' className="px-4 text-[13px] py-4 ">{audio.title}</td>
      <td colSpan='2' className="px-4 text-[13px] py-4">{audio.artist}</td>
      <td className="px-4 text-[13px] py-4">{audio.category.name}</td>
      <td className="px-4 text-[13px] py-4">{audio.program.name}</td>
      <td className="px-4 text-[13px] py-4">  {new Date(audio.created_at).toLocaleDateString()}</td>
+     <td className="px-4 text-[13px] py-4">
+    <button onClick={() => handleEdit(audio)} className="text-flamingYellow underline underline-offset-2 hover:text-white">Edit</button>
+  </td>
    </tr>
     )}
    

@@ -4,7 +4,7 @@ import { LuMusic4 } from "react-icons/lu";
 import { PiMusicNotesThin } from "react-icons/pi";
 import Image from "next/image";
 
-function Upload({ onClose, onUpload }) {
+function Upload({ onClose, onUpload, editAudioData }) {
   const [title, setTitle] = useState("");
   const [duration, setDuration] = useState("");
   const [artist, setArtist] = useState("");
@@ -54,10 +54,21 @@ function Upload({ onClose, onUpload }) {
   
     fetchPrograms();
     fetchCategories();
-    console.log(categories,"categories")
-    console.log(programs,"programs")
+
      
   }, []);
+
+  useEffect(() => {
+    if (editAudioData) {
+      setTitle(editAudioData.title);
+      setDuration(editAudioData.duration);
+      setArtist(editAudioData.artist);
+      setCategory(editAudioData.category.id);
+      setProgram(editAudioData.program.id);
+      setThumbnailUrl(editAudioData.thumbnail_url);
+      setAudioUrl(editAudioData.audio_url);
+    }
+  }, [editAudioData]);
 
 
 
@@ -224,7 +235,7 @@ function Upload({ onClose, onUpload }) {
         >
           <div className="flex flex-row gap-6 w-full">
             {/* Left form items start */}
-            <div className="grid grid-cols-2 gap-x-4 justify-between grow text-sm font-normal">
+            <div className="grid grid-cols-2 gap-4 justify-between grow text-sm font-normal">
               <div className=" col-span-2">
                 <input
                   className="bg-flamingAsh rounded-xl h-10 px-4 py-auto placeholder:text-white outline-none w-full "
@@ -337,18 +348,18 @@ function Upload({ onClose, onUpload }) {
 
             {/* Upload Right item start */}
             {audioUrl ? (
-              <div className="flex justify-center items-center w-[230px] h-[230px] overflow-y-scroll bg-flamingAsh rounded-lg flex items-center">
-                {audioFile.name}
-                <button
-                  onClick={() => {
-                    setAudioUrl("");
-                    setAudioUploaded(false);
-                  }}
-                  className="text-sm text-red-500"
-                >
-                  Remove
-                </button>
-              </div>
+             <div className="flex justify-center items-center w-[230px] h-[230px] bg-flamingAsh rounded-lg hover:bg-flamingGrey ">
+             <p>{audioFile ? audioFile.name : `${title}.mp3`}</p>
+             <button
+               onClick={() => {
+                 setAudioUrl("");
+                 setAudioUploaded(false);
+               }}
+               className="text-sm text-red-500"
+             >
+               Remove
+             </button>
+           </div>
             ) : (
               <div className="flex justify-center items-center w-[230px] h-[230px] bg-flamingAsh rounded-lg hover:bg-flamingGrey ">
               {audioUploaded && uploading ? (<p>Uploading...</p>):(
