@@ -3,8 +3,9 @@ import React, { useState, useEffect } from "react";
 import { LuMusic4 } from "react-icons/lu";
 import { PiMusicNotesThin } from "react-icons/pi";
 import Image from "next/image";
+import { Toaster,toast } from "react-hot-toast";
 
-function Upload({ onClose, onUpload, editAudioData }) {
+function Upload({ onClose, onUpload, editAudioData,editMode }) {
   const [title, setTitle] = useState("");
   const [duration, setDuration] = useState("");
   const [artist, setArtist] = useState("");
@@ -71,7 +72,7 @@ function Upload({ onClose, onUpload, editAudioData }) {
   }, [editAudioData]);
 
 
-
+console.log(editMode)
   // Function to handle thumbnail upload
   const handleThumbnailUpload = async (event) => {
     const file = event.target.files[0];
@@ -155,7 +156,50 @@ function Upload({ onClose, onUpload, editAudioData }) {
   };
 
   const createAudio = async () => {
-    try {
+
+    if(editAudioData){
+      try {
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_APIURL}/audios/${editAudioData.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title,
+            duration,
+            artist,
+            category,
+            program,
+            thumbnail_url: thumbnailUrl,
+            audio_url: audioUrl,
+          }),
+        });
+        console.log( title,
+          duration,
+          artist,
+          category,
+          program,
+          thumbnailUrl,
+           audioUrl,)
+           if (response.ok){
+            onClose();
+            onUpload();
+            toast.success("Edited Audio Successfully")
+            
+          }
+       
+       else if (!response.ok) {
+          throw new Error("Failed to populate endpoint");
+        }
+  
+       
+      } catch (error) {
+        console.error("Error populating endpoint:", error);
+        setErrors([...errors, "Error populating endpoint"]);
+      }
+    }
+    else try {
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_APIURL}/audios`, {
         method: "POST",
@@ -179,9 +223,13 @@ function Upload({ onClose, onUpload, editAudioData }) {
         program,
         thumbnailUrl,
          audioUrl,)
-
-      if (!response.ok) {
+if (response.ok){
+  toast.success("Created Audio Successfully")
+  onUpload();
+}
+    else  if (!response.ok) {
         throw new Error("Failed to populate endpoint");
+     
       }
 
       // Reset form fields and states after successful upload
@@ -198,6 +246,7 @@ function Upload({ onClose, onUpload, editAudioData }) {
       setErrors([]);
     } catch (error) {
       console.error("Error populating endpoint:", error);
+      toast.error("Error uploading audio. Try Again ")
       setErrors([...errors, "Error populating endpoint"]);
     }
   };
@@ -215,6 +264,7 @@ function Upload({ onClose, onUpload, editAudioData }) {
 
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div><Toaster/></div>
       <div className="bg-flamingBlack border border-flamingRed text-white px-12 rounded-lg h-[480px] relative w-[900px]">
         <button
           className="text-white underline absolute top-8 right-12"
@@ -393,7 +443,11 @@ className="cursor-pointer h-full w-full text-white rounded-md flex flex-col just
               type="submit"
               className="bg-flamingRed text-white px-4 py-2 rounded-md items-start flex gap-2  flex-row"
             >
-              <LuMusic4 size={20} /> Upload Audio
+             {editAudioData?
+             "Save changes":(
+              <><LuMusic4 size={20} /> Upload Audio</>)
+            } 
+            
             </button>
           </div>
         </form>

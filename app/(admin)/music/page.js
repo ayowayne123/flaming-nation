@@ -9,11 +9,18 @@ import { CiMicrophoneOn } from "react-icons/ci";
 import { FiPlay } from "react-icons/fi";
 import { PiPlayLight } from "react-icons/pi";
 import MusicTable from './musicTable';
+import { Toaster } from 'react-hot-toast';
+
 
 function Page() {
   const [audioOverview, setAudioOverview] = useState([]);
   const [totalAudios, setTotalAudios] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  const handleUpload = async () => {
+   
+    fetchData();
+  };
 
   useEffect(() => {
     fetchData();
@@ -74,6 +81,7 @@ function Page() {
 
   return  (
     <div className="p-8 w-full mx-auto max-w-[1300px] overflow-hidden">
+        <div><Toaster/></div>
     {/* Top Icon cards start */}
   <div className="flex flex-row gap-4 mb-8">
   {icons.length === 0 ? (
@@ -88,7 +96,7 @@ function Page() {
   {/* Top icon cards end */}
 
   {/* Table for music start */}
-  <div><MusicTable/></div>
+  <div><MusicTable onUpload={handleUpload}/></div>
 
 
   {/* Table for music end */}

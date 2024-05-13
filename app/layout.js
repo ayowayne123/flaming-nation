@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import localFont from "next/font/local";
 
+
 export const metadata = {
   title: "Flaming Nation Dashboard",
   description: "An Admin dashbaord for Pdaniel",
@@ -40,6 +41,7 @@ const euclid = localFont({
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+    
       <body className={euclid.className}>{children}</body>
     </html>
   );

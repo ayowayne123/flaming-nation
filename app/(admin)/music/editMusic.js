@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Upload from "./uploadMusic";
 
-function EditAudio({ audioData, onClose }) {
+function EditAudio({ audioData, onClose, editMode, onUpload }) {
   const [editAudioData, setEditAudioData] = useState(null);
 
   useEffect(() => {
@@ -9,7 +9,7 @@ function EditAudio({ audioData, onClose }) {
   }, [audioData]);
 
   return (
-    <Upload onClose={onClose} editAudioData={editAudioData} />
+    <Upload onClose={onClose} editAudioData={editAudioData} editMode={editMode} onUpload={onUpload}/>
   );
 }
 

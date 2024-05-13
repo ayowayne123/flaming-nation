@@ -7,7 +7,7 @@ import { RiEqualizerLine } from "react-icons/ri";
 import { LuMusic4 } from "react-icons/lu";
 import { BsMusicNote } from "react-icons/bs";
 
-function MusicTable() {
+function MusicTable({onUpload}) {
   const [showUploadPopup, setShowUploadPopup] = useState(false);
   const [tableData, setTableData] = useState([]);
   const [showEditPopup, setShowEditPopup] = useState(false);
@@ -15,6 +15,7 @@ function MusicTable() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 const [filteredTableData, setFilteredTableData] = useState([]);
+const [editMode, setEditMode]= useState(false);
 
   const toggleUploadPopup = () => {
     setShowUploadPopup(!showUploadPopup);
@@ -27,6 +28,7 @@ const [filteredTableData, setFilteredTableData] = useState([]);
   const handleEdit = (audio) => {
     setEditAudioData(audio);
     toggleEditPopup();
+    setEditMode(true)
   };
   useEffect(() => {
   const fetchTableData = async () => {
@@ -113,11 +115,11 @@ const handleSearchChange = (event) => {
       </div>
       {/* Popup for upload */}
       {showUploadPopup && (
-        <Upload onClose={toggleUploadPopup}  />
+        <Upload onClose={toggleUploadPopup} onUpload={onUpload} />
       )}
     
       {showEditPopup && (
-        <EditAudio onClose={toggleEditPopup} audioData={editAudioData} />
+        <EditAudio onClose={toggleEditPopup} audioData={editAudioData} editMode={editMode} onUpload={onUpload}/>
       )}
       {/* Top bar end */}
 
